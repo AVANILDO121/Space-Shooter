@@ -23,6 +23,7 @@ class SpaceShooter:
 
         while True:
             self._check_events()
+            self.ship.update()
             self._update_screen()
             self.clock.tick(60)
 
@@ -32,11 +33,26 @@ class SpaceShooter:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    # Move a espaçonave para a direita
-                    self.ship.rect.x += 1
+                self._check_keydown_events(event)
+            elif event.type == pygame.KEYUP:
+                self._check_keyup_events(event)
+
+    def _check_keydown_events(self, event):
+        """Responde as teclas pressionadas"""
+        if event.key == pygame.K_RIGHT:
+            # Move a espaçonave para a direita
+            self.ship.moving_right = True
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = True
+
+    def _check_keyup_events(self, event):
+        if event.key == pygame.K_RIGHT:
+            self.ship.moving_right = False
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = False
 
     def _update_screen(self):
+
         # Redesenha a tela durante cada passagem pelo loop.
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
@@ -45,6 +61,7 @@ class SpaceShooter:
         pygame.display.flip()
 
 if __name__ == '__main__':
+
     # Cria a instancia do jogo e executa o jogo
     ai = SpaceShooter()
     ai.run_game()
