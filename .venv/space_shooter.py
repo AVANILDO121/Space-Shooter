@@ -29,7 +29,7 @@ class SpaceShooter:
         while True:
             self._check_events()
             self.ship.update()
-            self.bullets.update()
+            self._update_bullets()
             self._update_screen()
             self.clock.tick(60)
 
@@ -63,8 +63,9 @@ class SpaceShooter:
 
     def _fire_bullet(self):
         """Cria um novo projétil e adiciona ao grupo de projéteis"""
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullet_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
 
     def _update_screen(self):
 
@@ -76,6 +77,16 @@ class SpaceShooter:
 
         # Deixa a linha desehada  mais recente visível
         pygame.display.flip()
+    def _update_bullets(self):
+        """Atualiza a posição dos projetéis e descarta os projéteis antigos"""
+        # Atualiza as posições dos projéteis
+        self.bullets.update()
+
+        # Descartam os projetéis que desaparecem
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+
 
 if __name__ == '__main__':
 

@@ -21,7 +21,6 @@ class Bullet(Sprite):
         """Desloca o projétil verticalmente pela tela"""
         # Atualiza a posição exata na tela]
         self.y -= self.settings.bullet_speed
-
         # Atualiza a posição do react
         self.rect.y = self.y
 
