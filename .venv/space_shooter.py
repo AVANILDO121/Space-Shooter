@@ -96,19 +96,30 @@ class SpaceShooter:
         """Cria a frota de alienígenas"""
         # Cria um alienígena e continua adicionando alienígenas
         # até que não haja mais espaço
-        # O distanciamento entre alienígenas é a largura de um alienígena
+        # O distanciamento entre alienígenas é de uma largura
+        # de alienígena e uma altura de alienígena
         alien = Alien(self)
-        alien_widht = alien.rect.width
+        alien_widht, alien_height = alien.rect.size
 
-        currect_x = alien_widht
-        while currect_x < (self.settings.screen_width - 2 * alien_widht):
-            new_alien = Alien(self)
-            new_alien.x = currect_x
-            new_alien.rect.x = currect_x
-            self.aliens.add(new_alien)
-            currect_x += 2 * alien_widht
+        currect_x, currect_y = alien_widht, alien_height
+        while currect_y < (self.settings.screen_height - 3 * alien_height):
+            while currect_x < (self.settings.screen_width - 2 * alien_widht):
+                self._create_alien(currect_x, currect_y)
+                currect_x += 2 * alien_widht
+
+            # Termina uma fileira; define o valor de x, e incrementa o valor de y
+            currect_x = alien_widht
+            currect_y += 2 * alien_height
 
 
+
+    def _create_alien(self, x_position, y_position):
+        """Cria  um alienígena e o posiciona a fileira"""
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x = x_position
+        new_alien.rect.y = y_position
+        self.aliens.add(new_alien)
 
 
 
