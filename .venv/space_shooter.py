@@ -1,9 +1,14 @@
 import sys
+from time import sleep
+
 import pygame
+
 from settings import Settings
+from game_stats import Game_stats
 from ship import Ship
 from bullet import Bullet
 from Inimigo import Alien
+
 class SpaceShooter:
     """Classe geral para gerenciar ativos e comportamentos do jogo"""
 
@@ -18,6 +23,10 @@ class SpaceShooter:
         self.settings.screen_height = self.screen.get_rect().height
         #self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption('Space Shooter')
+
+        # Cria uma instância para armazenar estatísticas do jogo
+        self.stats = Game_stats(self)
+
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -26,14 +35,22 @@ class SpaceShooter:
 
         # Define a cor do backgroud.
         self.bg_color = (230, 230, 230)
+
+        # Inicializa Space Shooter em um estado ativo
+        self.game_active = True
+
+
     def run_game(self):
         """Inicia o loop principal do jogo"""
 
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_aliens()
+
+            if self.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
+
             self._update_screen()
             self.clock.tick(60)
 
@@ -138,6 +155,13 @@ class SpaceShooter:
         self._check_fleet_edges()
         self.aliens.update()
 
+        # Detecta colisões entre alienígenas e espaçonaves
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+        # Procura por alienígenas se chocando contra a parte inferior da tela
+        self._check_aliens_botton()
+
     def _check_fleet_edges(self):
         """Responde apropiadamente se algum alienígena alcançou uma borda"""
         for alien in self.aliens.sprites():
@@ -151,7 +175,33 @@ class SpaceShooter:
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
 
+    def _ship_hit(self):
+        """Responda à espaçonave sendo abatida por um alienígena"""
+        if self.stats.ships_left > 0:
 
+            # Decrementa ships_left
+            self.stats.ships_left -= 1
+
+            # Descarta quaisquer projéteis e alienígenas restantes
+            self.bullets.empty()
+            self.aliens.empty()
+
+            # Cria uma nova frota e centraliza a espaçonave
+            self._create_fleet()
+            self.ship.center_ship()
+
+            # Pausa quando a nave é explodida
+            sleep(0.5)
+        else:
+            self.game_active = False
+
+    def _check_aliens_botton(self):
+        """Verifica se algum alienígena chegou a parte inferior da tela"""
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= self.settings.screen_height:
+                # Trata isso como se a espaçonave tivesse sido abatida
+                self._ship_hit()
+                break
 
 
 if __name__ == '__main__':

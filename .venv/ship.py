@@ -34,6 +34,11 @@ class Ship:
         # Atualiza o objeto rect de self.x
         self.rect.x = self.x
 
+    def center_ship(self):
+        """Centraliza a espaçonave na tela"""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
+
     def blitme(self):
         """Desenha a espaçonave em sua localização atual"""
         self.screen.blit(self.image, self.rect)
