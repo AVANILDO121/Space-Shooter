@@ -92,6 +92,17 @@ class SpaceShooter:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+            self._check_bullet_alien_collisions()
+    def _check_bullet_alien_collisions(self):
+        """Responde à colisões alienígenas"""
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        # Verifica se algum projétil atingiu um alienígena
+        # Se sim, descarta o projétil e o alienígena
+        if not self.aliens:
+            # Destroi todos os projéteis existentes e cria uma nova frota
+            self.bullets.empty()
+            self._create_fleet()
 
     def _create_fleet(self):
         """Cria a frota de alienígenas"""
