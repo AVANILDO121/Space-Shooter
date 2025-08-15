@@ -8,6 +8,7 @@ from game_stats import Game_stats
 from ship import Ship
 from bullet import Bullet
 from Inimigo import Alien
+from button import Button
 
 class SpaceShooter:
     """Classe geral para gerenciar ativos e comportamentos do jogo"""
@@ -15,6 +16,10 @@ class SpaceShooter:
     def __init__(self):
         """ Inicializa o jogo e cria recursos do jogo"""
         pygame.init()
+
+        # Inicia Space Shooter em estado inativo
+        self.game_active = False
+
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
@@ -37,8 +42,10 @@ class SpaceShooter:
         self.bg_color = (230, 230, 230)
 
         # Inicializa Space Shooter em um estado ativo
-        self.game_active = True
+        #self.game_active = True
 
+        # Cria o botão play
+        self.play_button = Button(self, "iniciar")
 
     def run_game(self):
         """Inicia o loop principal do jogo"""
@@ -96,6 +103,10 @@ class SpaceShooter:
             bullet.draw_bullet()
         self.ship.blitme()
         self.aliens.draw(self.screen)
+
+        # Desenha o botão play se o jogo estiver inativo
+        if not self.game_active:
+            self.play_button.draw_button()
 
         # Deixa a linha desehada  mais recente visível
         pygame.display.flip()
