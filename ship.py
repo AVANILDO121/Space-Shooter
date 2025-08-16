@@ -9,7 +9,7 @@ class Ship:
         self.screen_rect = ai_game.screen.get_rect()
 
         # Sobe a imagem da espaçonave e obtém o react
-        self.image = pygame.image.load("Imagens/Jogador.bmp")
+        self.image = pygame.image.load("assets/Jogador.bmp")
         self.rect = self.image.get_rect()
 
         # Começa cada espaçonave nova no centro inferior da tela
@@ -18,7 +18,7 @@ class Ship:
         # Armazena um float para a horizontal exata da espaçonave
         self.x = float(self.rect.x)
 
-        # Flag de movimento; começa com uma espaçonave que não  está se movendo
+        # Flag de movimento; começa com uma espaçonave que não está se movendo
         self.moving_right = False
         self.moving_left = False
 

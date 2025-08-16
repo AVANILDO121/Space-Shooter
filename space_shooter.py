@@ -38,7 +38,7 @@ class SpaceShooter:
 
         self._create_fleet()
 
-        # Define a cor do backgroud.
+        # Define a cor do background.
         self.bg_color = (230, 230, 230)
 
         # Inicializa Space Shooter em um estado ativo
@@ -62,17 +62,39 @@ class SpaceShooter:
             self.clock.tick(60)
 
     def _check_events(self):
-        # Observa eventos de teclhado e mouse
+        # Observa eventos de teclado e mouse
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
 
+    def _check_play_button(self, mouse_pos):
+        """Inicia um jogo novo quando o jogador clica em play"""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.game_active:
+            # Redefine as estatísticas do jogo
+            self.stats.reset_stats()
+            self.game_active = True
+
+            # Descarta quaisquer projéteis e alienígenas restantes
+            self.bullets.empty()
+            self.aliens.empty()
+
+            # Cria uma frota nova e centraliza a espaçonave
+            self._create_fleet()
+            self.ship.center_ship()
+
+            #  Oculta o cursor do mouse
+            pygame.mouse.set_visible(False)
+
     def _check_keydown_events(self, event):
-        """Responde as teclas pressionadas"""
+        """Responde às teclas pressionadas"""
         if event.key == pygame.K_RIGHT:
             # Move a espaçonave para a direita
             self.ship.moving_right = True
@@ -108,7 +130,7 @@ class SpaceShooter:
         if not self.game_active:
             self.play_button.draw_button()
 
-        # Deixa a linha desehada  mais recente visível
+        # Deixa a linha desenhada mais recente visível
         pygame.display.flip()
 
     def _update_bullets(self):
@@ -122,7 +144,7 @@ class SpaceShooter:
                 self.bullets.remove(bullet)
             self._check_bullet_alien_collisions()
     def _check_bullet_alien_collisions(self):
-        """Responde à colisões alienígenas"""
+        """Responde a colisões alienígenas"""
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
 
         # Verifica se algum projétil atingiu um alienígena
@@ -154,7 +176,7 @@ class SpaceShooter:
 
 
     def _create_alien(self, x_position, y_position):
-        """Cria  um alienígena e o posiciona a fileira"""
+        """Cria um alienígena e o posiciona a fileira"""
         new_alien = Alien(self)
         new_alien.x = x_position
         new_alien.rect.x = x_position
@@ -174,7 +196,7 @@ class SpaceShooter:
         self._check_aliens_botton()
 
     def _check_fleet_edges(self):
-        """Responde apropiadamente se algum alienígena alcançou uma borda"""
+        """Responde apropriadamente se algum alienígena alcançou uma borda"""
         for alien in self.aliens.sprites():
             if alien.check_edges():
                 self._change_fleet_direction()
@@ -205,6 +227,7 @@ class SpaceShooter:
             sleep(0.5)
         else:
             self.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _check_aliens_botton(self):
         """Verifica se algum alienígena chegou a parte inferior da tela"""
@@ -217,6 +240,6 @@ class SpaceShooter:
 
 if __name__ == '__main__':
 
-    # Cria a instancia do jogo e executa o jogo
+    # Cria a instância do jogo e executa o jogo
     ai = SpaceShooter()
     ai.run_game()

@@ -1,6 +1,6 @@
 import pygame.font
 class Button:
-    """Classe para criar botões  para o jogo"""
+    """Classe para criar botões para o jogo"""
 
     def __init__(self,ai_game, msg):
         """Inicializa os atibutos do botão"""
@@ -8,7 +8,7 @@ class Button:
         self.screen = ai_game.screen
         self.screen_rect = self.screen.get_rect()
 
-        #Define as dimensções e propiedades do botão
+        #Define as dimensões e propriedades do botão
         self.width, self.height = 200, 50
         self.button_color = (0, 135, 0)
         self.text_color = (255,255,255)
