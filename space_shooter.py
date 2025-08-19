@@ -79,6 +79,7 @@ class SpaceShooter:
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.game_active:
             # Redefine as estatísticas do jogo
+            self.settings.initialize_dynamic_settings()
             self.stats.reset_stats()
             self.game_active = True
 
@@ -142,7 +143,7 @@ class SpaceShooter:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-            self._check_bullet_alien_collisions()
+        self._check_bullet_alien_collisions()
     def _check_bullet_alien_collisions(self):
         """Responde a colisões alienígenas"""
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
@@ -153,6 +154,7 @@ class SpaceShooter:
             # Destroi todos os projéteis existentes e cria uma nova frota
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _create_fleet(self):
         """Cria a frota de alienígenas"""
