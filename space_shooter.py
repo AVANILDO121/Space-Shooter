@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import Game_stats
+from scoreboard import Scoreboard
 from ship import Ship
 from bullet import Bullet
 from Inimigo import Alien
@@ -29,20 +30,17 @@ class SpaceShooter:
         #self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption('Space Shooter')
 
-        # Cria uma instância para armazenar estatísticas do jogo
+        # Cria uma instância para armazenar estatísticas do jogo,
+        # e cria um scoreboard
         self.stats = Game_stats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
 
-        self._create_fleet()
-
         # Define a cor do background.
         self.bg_color = (230, 230, 230)
-
-        # Inicializa Space Shooter em um estado ativo
-        #self.game_active = True
 
         # Cria o botão play
         self.play_button = Button(self, "iniciar")
@@ -81,6 +79,7 @@ class SpaceShooter:
             # Redefine as estatísticas do jogo
             self.settings.initialize_dynamic_settings()
             self.stats.reset_stats()
+            self.sb.prep_score()
             self.game_active = True
 
             # Descarta quaisquer projéteis e alienígenas restantes
@@ -127,6 +126,9 @@ class SpaceShooter:
         self.ship.blitme()
         self.aliens.draw(self.screen)
 
+        # Desenha as informações da pontuação
+        self.sb.show_score()
+
         # Desenha o botão play se o jogo estiver inativo
         if not self.game_active:
             self.play_button.draw_button()
@@ -146,7 +148,14 @@ class SpaceShooter:
         self._check_bullet_alien_collisions()
     def _check_bullet_alien_collisions(self):
         """Responde a colisões alienígenas"""
-        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens
+                                                , True, True)
+
+        if collisions:
+            for alien in collisions.values():
+                self.stats.score += self.settings.alien_points * len(alien)
+            self.sb.prep_score()
+            self.sb.check_high_score()
 
         # Verifica se algum projétil atingiu um alienígena
         # Se sim, descarta o projétil e o alienígena
