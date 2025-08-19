@@ -80,6 +80,8 @@ class SpaceShooter:
             self.settings.initialize_dynamic_settings()
             self.stats.reset_stats()
             self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
             self.game_active = True
 
             # Descarta quaisquer projéteis e alienígenas restantes
@@ -165,6 +167,10 @@ class SpaceShooter:
             self._create_fleet()
             self.settings.increase_speed()
 
+            # Aumenta o nível
+            self.stats.level += 1
+            self.sb.prep_level()
+
     def _create_fleet(self):
         """Cria a frota de alienígenas"""
         # Cria um alienígena e continua adicionando alienígenas
@@ -223,8 +229,9 @@ class SpaceShooter:
         """Responda à espaçonave sendo abatida por um alienígena"""
         if self.stats.ships_left > 0:
 
-            # Decrementa ships_left
+            # Decrementa ships_left e atualiza scoreboard
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
 
             # Descarta quaisquer projéteis e alienígenas restantes
             self.bullets.empty()
